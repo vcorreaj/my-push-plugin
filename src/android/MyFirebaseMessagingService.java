@@ -57,7 +57,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String title = data.getString("title");
             String body = data.getString("body");
             
-            Intent intent = new Intent(this, com.example.MainActivity.class);
+            Intent intent = new Intent(this, org.apache.cordova.CordovaActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
