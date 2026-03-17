@@ -1,0 +1,19 @@
+{
+  "name": "my-push-plugin",
+  "version": "1.0.0",
+  "description": "Plugin simplificado para notificaciones push",
+  "cordova": {
+    "id": "my-push-plugin",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "push",
+    "notification",
+    "firebase"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
