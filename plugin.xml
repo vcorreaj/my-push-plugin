@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="my-push-plugin" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>MyPushPlugin</name>
+    <description>Plugin simplificado para notificaciones push</description>
+    <license>MIT</license>
+    <keywords>push,notification,firebase</keywords>
+    
+    <js-module name="MyPushPlugin" src="www/MyPushPlugin.js">
+        <clobbers target="window.MyPushPlugin" />
+    </js-module>
+    
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="MyPushPlugin">
+                <param name="android-package" value="com.example.MyPushPlugin" />
+            </feature>
+        </config-file>
+        
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <service 
+                android:name="com.example.MyFirebaseMessagingService" 
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                </intent-filter>
+            </service>
+            
+            <meta-data 
+                android:name="com.google.firebase.messaging.default_notification_icon" 
+                android:resource="@drawable/ic_stat_ic_notification" />
+            
+            <meta-data 
+                android:name="com.google.firebase.messaging.default_notification_color" 
+                android:resource="@color/colorAccent" />
+        </config-file>
+        
+        <!-- Permisos necesarios -->
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+        </config-file>
+        
+        <source-file src="src/android/MyPushPlugin.java" target-dir="src/com/example" />
+        <source-file src="src/android/MyFirebaseMessagingService.java" target-dir="src/com/example" />
+        
+        <framework src="com.google.firebase:firebase-messaging:23.4.0" />
+        <framework src="com.google.android.gms:play-services-base:18.3.0" />
+    </platform>
+</plugin>
