@@ -23,11 +23,19 @@ public class MyPushPlugin extends CordovaPlugin {
     protected void pluginInitialize() {
         super.pluginInitialize();
         
-        // 🔥 Inicializar Firebase automáticamente
-        Context context = this.cordova.getActivity().getApplicationContext();
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context);
-            Log.d(TAG, "Firebase inicializado automáticamente");
+        // 🔥 INICIALIZAR FIREBASE AUTOMÁTICAMENTE
+        try {
+            Context context = this.cordova.getActivity().getApplicationContext();
+            
+            // Verificar si Firebase ya está inicializado
+            if (FirebaseApp.getApps(context).isEmpty()) {
+                FirebaseApp.initializeApp(context);
+                Log.i(TAG, "✅ Firebase inicializado correctamente");
+            } else {
+                Log.i(TAG, "✅ Firebase ya estaba inicializado");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error inicializando Firebase: " + e.getMessage(), e);
         }
     }
     
@@ -51,20 +59,23 @@ public class MyPushPlugin extends CordovaPlugin {
     private void getToken(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(() -> {
             try {
+                Log.d(TAG, "Obteniendo token FCM...");
+                
                 FirebaseMessaging.getInstance().getToken()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult() != null) {
                             String token = task.getResult();
-                            Log.d(TAG, "Token obtenido: " + token);
+                            Log.i(TAG, "✅ Token FCM obtenido: " + token);
                             callbackContext.success(token);
                         } else {
                             Exception e = task.getException();
-                            Log.e(TAG, "Error obteniendo token", e);
-                            callbackContext.error("Error obteniendo token: " + (e != null ? e.getMessage() : "desconocido"));
+                            String errorMsg = (e != null) ? e.getMessage() : "Error desconocido";
+                            Log.e(TAG, "❌ Error obteniendo token: " + errorMsg);
+                            callbackContext.error("Error obteniendo token: " + errorMsg);
                         }
                     });
             } catch (Exception e) {
-                Log.e(TAG, "Excepción en getToken", e);
+                Log.e(TAG, "❌ Excepción en getToken: " + e.getMessage(), e);
                 callbackContext.error(e.getMessage());
             }
         });
@@ -75,7 +86,7 @@ public class MyPushPlugin extends CordovaPlugin {
         PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
         result.setKeepCallback(true);
         callbackContext.sendPluginResult(result);
-        Log.d(TAG, "Listener de notificaciones registrado");
+        Log.d(TAG, "✅ Listener de notificaciones registrado");
     }
     
     private void onTokenRefresh(CallbackContext callbackContext) {
@@ -83,7 +94,7 @@ public class MyPushPlugin extends CordovaPlugin {
         PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
         result.setKeepCallback(true);
         callbackContext.sendPluginResult(result);
-        Log.d(TAG, "Listener de token refresh registrado");
+        Log.d(TAG, "✅ Listener de token refresh registrado");
     }
     
     public static void sendNotification(JSONObject data) {
@@ -91,7 +102,7 @@ public class MyPushPlugin extends CordovaPlugin {
             PluginResult result = new PluginResult(PluginResult.Status.OK, data);
             result.setKeepCallback(true);
             notificationCallbackContext.sendPluginResult(result);
-            Log.d(TAG, "Notificación enviada a JS: " + data.toString());
+            Log.d(TAG, "📲 Notificación enviada a JS: " + data.toString());
         }
     }
     
@@ -100,7 +111,7 @@ public class MyPushPlugin extends CordovaPlugin {
             PluginResult result = new PluginResult(PluginResult.Status.OK, token);
             result.setKeepCallback(true);
             tokenCallbackContext.sendPluginResult(result);
-            Log.d(TAG, "Token enviado a JS: " + token);
+            Log.d(TAG, "🔄 Token enviado a JS: " + token);
         }
     }
 }
